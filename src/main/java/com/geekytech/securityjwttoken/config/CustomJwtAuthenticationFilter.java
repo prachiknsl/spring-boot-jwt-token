@@ -2,6 +2,7 @@ package com.geekytech.securityjwttoken.config;
 
 import com.geekytech.securityjwttoken.util.JwtUtil;
 import io.jsonwebtoken.ExpiredJwtException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,11 +20,13 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Component
+@Slf4j
 public class CustomJwtAuthenticationFilter extends OncePerRequestFilter {
     @Autowired
     private JwtUtil jwtTokenUtil;
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        log.debug("Inside doFilterInternal Method");
         try {
             String jwtToken = extractJwtFromRequest(request);
             if (StringUtils.hasText(jwtToken) && jwtTokenUtil.validateToken(jwtToken)) {
@@ -41,11 +44,13 @@ public class CustomJwtAuthenticationFilter extends OncePerRequestFilter {
             }
         }
         catch (ExpiredJwtException ex){
+            log.error("Error :Token is Expired");
             request.setAttribute("exception",ex);
             throw ex;
         }
         catch (BadCredentialsException ex)
         {
+            log.error("Error : Bad Credentials");
             request.setAttribute("exception",ex);
             throw ex;
         }
@@ -53,6 +58,7 @@ public class CustomJwtAuthenticationFilter extends OncePerRequestFilter {
 }
 
     private String extractJwtFromRequest(HttpServletRequest request) {
+        log.info("Inside extractJwtFromRequest method");
         String bearerToken = request.getHeader("Authorization");
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7, bearerToken.length());

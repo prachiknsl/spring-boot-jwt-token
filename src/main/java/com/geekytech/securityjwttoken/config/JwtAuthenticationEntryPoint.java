@@ -14,6 +14,7 @@ import java.util.Collections;
 
 @Component
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
+    //this class used to prepare error reponse
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
                          AuthenticationException authException) throws IOException, ServletException {

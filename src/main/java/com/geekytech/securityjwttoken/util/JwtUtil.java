@@ -1,6 +1,7 @@
 package com.geekytech.securityjwttoken.util;
 
 import io.jsonwebtoken.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.GrantedAuthority;
@@ -11,7 +12,9 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 @Service
+@Slf4j
 public class JwtUtil {
+
     @Value("${jwt.secret:abc}")
     private String secret;
 
@@ -20,12 +23,15 @@ public class JwtUtil {
 
     // generate token for user
     public String   generateToken(UserDetails userDetails) {
+        log.info("Inside generateToken");
         Map<String, Object> claims = new HashMap<>();
         Collection<? extends GrantedAuthority> roles = userDetails.getAuthorities();
         if (roles.contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {
+            log.debug("User have admin role");
             claims.put("isAdmin", true);
         }
         if (roles.contains(new SimpleGrantedAuthority("ROLE_USER"))) {
+            log.debug("User have user role");
             claims.put("isUser", true);
         }
         return doGenerateToken(claims, userDetails.getUsername());
@@ -58,9 +64,11 @@ public class JwtUtil {
         Boolean isAdmin = claims.get("isAdmin", Boolean.class);
         Boolean isUser = claims.get("isUser", Boolean.class);
         if (isAdmin != null && isAdmin == true) {
+            log.debug("User have admin role");
             roles = Arrays.asList(new SimpleGrantedAuthority("ROLE_ADMIN"));
         }
         if (isUser != null && isUser == true) {
+            log.debug("User have user role");
             roles = Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"));
         }
         return roles;

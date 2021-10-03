@@ -7,7 +7,7 @@ import lombok.experimental.FieldDefaults;
 @Data
 @FieldDefaults(level= AccessLevel.PRIVATE)
 public class UserDTO {
-    private String username;
-    private String password;
-    private String role;
+    String username;
+    String password;
+    String role;
 }

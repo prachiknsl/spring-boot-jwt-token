@@ -12,10 +12,11 @@ import javax.persistence.*;
 public class UserDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    long id;
     @Column
-    private String username;
+    String username;
     @Column
-    private String password;
+    String password;
     @Column
-    private String role;}
+    String role;
+}

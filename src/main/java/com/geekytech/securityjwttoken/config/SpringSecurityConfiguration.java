@@ -44,12 +44,11 @@ public class SpringSecurityConfiguration  extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
-        // We don't need CSRF for this example
+        // configurations used by requests to hit endpoint checking user must have appropriate role to access particular endpoint
         httpSecurity.csrf().disable()
                 .authorizeRequests().antMatchers("/admin").hasRole("ADMIN")
                 .antMatchers("/user").hasAnyRole("ADMIN","USER")
                 .antMatchers("/authenticate", "/register").permitAll().anyRequest().authenticated()
-                //.and().httpBasic();
                 .and().exceptionHandling()
                 .authenticationEntryPoint(unAuthHandler).and()
                 .sessionManagement()

@@ -5,6 +5,7 @@ import com.geekytech.securityjwttoken.model.AuthenticationRequest;
 import com.geekytech.securityjwttoken.model.AuthenticationResponse;
 import com.geekytech.securityjwttoken.model.UserDTO;
 import com.geekytech.securityjwttoken.util.JwtUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@Slf4j
 public class AuthenticationController {
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -30,14 +32,16 @@ public class AuthenticationController {
 
     @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
     public ResponseEntity<?> createAuthToken(@RequestBody AuthenticationRequest authRequest) throws Exception {
-        System.out.println("heyyyyy");
+        log.info("Inside authenticate controller");
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
         }catch (DisabledException e){
+            log.error("Error : USER_DISABLED");
             throw new Exception("USER_DISABLED",e);
         }
         catch (BadCredentialsException e){
+            log.error("Error : INVALID_CREDENTIALS");
             throw new Exception("INVALID_CREDENTIALS", e);
         }
         UserDetails userDetails =userDetailsService.loadUserByUsername(authRequest.getUsername());
@@ -47,6 +51,7 @@ public class AuthenticationController {
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ResponseEntity<?> saveUser(@RequestBody UserDTO user) throws Exception {
+        log.info("Inside register controller");
         return ResponseEntity.ok(userDetailsService.save(user));
     }
 }
